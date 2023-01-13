@@ -12,7 +12,9 @@ ensuite executer le ClientRegister(package: chatclientudpapplication) class plus
 -> entrer votre nom et votre mot de passe et cliquer sur le bouton "connexion" pour s authentifier
 
 apres la reussite de la connection des clients au server, la fenetre ClientRegister se ferme et la fenetre MyClient s'ouvre pour que les clients puissent discuter entre eux
-![CHEESE!](Screenshot 1_13_2023 1_50_25 AM.png)
+
+![Screenshot 1_13_2023 1_50_25 AM](https://user-images.githubusercontent.com/104314459/212221365-1b175994-6bb6-4708-895c-246853bdbec7.png)
+
 
 
 NB: N oublier d ajouter les librairie suivante:
