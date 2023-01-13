@@ -48,14 +48,17 @@ public class Server extends javax.swing.JFrame implements Runnable {
 
                 // si le client a envoyé un message qui ne contient pas "register" c est a dire qu il a envoyé un message normal pas une inscription ou bien une connexion
                 if(!message.contains("register")) {
+                    // le messae du client c est un message normal vers un client specifique
                    if(message.contains("envoie a un client")){
                       message=message.substring(18);
                       StringTokenizer st=new StringTokenizer(message,":");
+                        // on recupere l id du client vers lequel on veut envoyer le message , le message et le nom du client qui a envoyé le message
                         String idClient=st.nextToken();
                         String msg=st.nextToken();
                         String sender=st.nextToken();
                         msg="< "+sender+" a t envoye> "+msg;
                        Set<String> k = clientColl.keySet();
+                       // on parcourt la liste des clients connectés pour trouver le client vers lequel on veut envoyer le message et on l envoie le paquet
                           for(String key : k){
                               String value = clientColl.get(key).toString();
                             if(key.equals(idClient)){
@@ -66,12 +69,13 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                  socket.send(packet);
                             }
                           }
-                   }else if(message.contains("envoie fichier client")){
-                       // extraire extemsion,recepteurclient et longueur du fichier a envoyer du message recu
-                        System.out.println("envoie fichier client here");
+                   }
+                   // ici le client veut envoyer un fichier pas un message vers un client specifique
+                   else if(message.contains("envoie fichier client")){
                         message=message.substring(21);
                         StringTokenizer st=new StringTokenizer(message,":");
-                        String sizefile=st.nextToken();
+                       // extraire extension,recepteurclient et longueur du fichier a envoyer du message recu
+                       String sizefile=st.nextToken();
                         String idClient=st.nextToken();
                         String extension=st.nextToken();
                         // receive file
@@ -84,6 +88,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
                        bufferedOutputStream.write(tampon, 0 , tampon.length );
                        bufferedOutputStream.flush();
+                       // on fait un sommeil de 2 seconde pour attendre que le fichier soit bien ecrit dans le disque
                        Thread.sleep(2000);
                        // trouver le sender
                        String sender="";
@@ -94,7 +99,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                  sender=key.toString();
                             }
                        }
-                       // envoyer file to client
+                       // envoyer le fichier vers le client specifique
                             for(Object key : k){
                                 String value = clientColl.get(key).toString();
                                 if(key.equals(idClient)){
@@ -113,10 +118,12 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                     System.out.println("File sent to client! avec succe");
                                 }
                             }
-                   }else if(message.contains("envoiefile vers tous")){
-                       // extraire extemsion et longueur du fichier a envoyer du message recu
+                   }
+                   // ici le client veut envoyer un fichier vers tous les clients
+                   else if(message.contains("envoiefile vers tous")){
                        message=message.substring(20);
                        StringTokenizer st=new StringTokenizer(message,":");
+                       // extraire extension et longueur du fichier a envoyer du message recu
                        String sizefile=st.nextToken();
                        String extension=st.nextToken();
                           // receive file
@@ -141,7 +148,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                sender=key.toString();
                            }
                        }
-                          // envoyer file vers tous sauf sender
+                          // envoyer le fichier vers tous les clients sauf le sender
                        for (Object key : k) {
                            String value = clientColl.get(key).toString();
                            if(!value.equals(id)){
@@ -161,12 +168,14 @@ public class Server extends javax.swing.JFrame implements Runnable {
                            }
                        }
                    }
+                   // ici le client a ferme sa fenetre c est a dire il a quitte l application donc on le supprime de la liste des clients et on informe les autres clients
                    else if(message.contains("formWindowClosing")){
-                       // extraire id du client qui a ferme la fenetre
+
                        StringTokenizer st=new StringTokenizer(message,":");
+                       // extraire id du client qui a ferme la fenetre
                        String s=st.nextToken();
                        String idClient=st.nextToken();
-                       System.out.println("Client ID: " + idClient);
+
                        // supprimer le client de la liste
                        clientColl.remove(idClient);
                        msgBox.append(idClient+" removed! \n");
@@ -185,6 +194,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                       packet = new DatagramPacket(buf, buf.length, clientAddress, Integer.parseInt(s1[1]));
                                       socket.send(packet);
                                       System.out.println("I sent < "+msg+"> to "+key);
+                                      // envoyer la liste des clients a tous les clients a nouveau
                                       new PrepareClientList().start();
                                }catch(Exception ex){
                                    clientColl.remove(key);
@@ -193,6 +203,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                                }
                        }
                    }
+                   // le client veut envoyer un message  normale a tous les clients
                    else {
                        // envoyer le message a tous les clients
                        String sourceclient="";
@@ -223,6 +234,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                        }
                    }
                 }
+                // c est une operation d inscription ou bien d une connexion
                 else {
                     // registration du client  dans la liste
                     StringTokenizer st = new StringTokenizer(message, ":");
@@ -236,7 +248,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                         System.out.println("Client Already Registered");
                     }
                 }
-                message = "";
+
 
             } catch (Exception e) {
                 System.err.println(e);
@@ -255,7 +267,6 @@ public class Server extends javax.swing.JFrame implements Runnable {
                     String key=(String)itr.next();
                     ids+=key+",";
                 }
-
                 itr=k.iterator();
                 String list="";
                 while(itr.hasNext()){
@@ -270,7 +281,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
                         byte[] tampon=ids.getBytes();
                         DatagramPacket packet=new DatagramPacket(tampon, tampon.length, clientAddress, port);
                         socket.send(packet);
-                        System.out.println("Client List Sent");
+                        // System.out.println("Client List Sent");
                         list="";
                     }catch(Exception ex){
                         ex.printStackTrace();
@@ -283,8 +294,8 @@ public class Server extends javax.swing.JFrame implements Runnable {
     }
 
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">
+
+
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -345,34 +356,11 @@ public class Server extends javax.swing.JFrame implements Runnable {
         );
 
         pack();
-    }// </editor-fold>
+    }
 
 
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Server server=new Server();

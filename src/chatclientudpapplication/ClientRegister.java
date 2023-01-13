@@ -120,16 +120,20 @@ public class ClientRegister extends JFrame{
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         try{
             int inscrit = 0;
+            // on recupere l id et le mot de passe
             String idclient=idText.getText();
             String password=new String(jPasswordField1.getPassword());
             DatabaseConnection db=new DatabaseConnection();
             String query="SELECT * FROM client";
             ResultSet rs=db.getStatement().executeQuery(query);
+            // on verifie si l id et le mot de passe sont corrects
             while(rs.next())
             {
                 if(idclient.equals(rs.getString(2))){
+                    // si l id est correct on verifie le mot de passe
                     if(!password.equals(rs.getString(3))){
                         inscrit=2;
+                        // si le mot de passe est incorrect on affiche un message d erreur
                         JOptionPane.showMessageDialog(null, "Mot de passe incorrect");
                         jPasswordField1.setText("");
                         break;
@@ -139,6 +143,7 @@ public class ClientRegister extends JFrame{
                     }
                 }
             }
+            // si l id et le mot de passe sont corrects on affiche un message de connexion reussie
             if(inscrit==1){
                 JOptionPane.showMessageDialog(null,"connexion réussie");
                 String id=idclient+": register";
@@ -149,6 +154,7 @@ public class ClientRegister extends JFrame{
                 new MyClient(idclient,socket).setVisible(true);
                 this.dispose();
             }
+            // si le nom d utilisateur n existe pas on ajoute le client a la base de donnee avec son mot de passe et on affcihe un message de "Inscription reussie"
             else if(inscrit==0){
                 String sql="INSERT INTO Client (nom,password) VALUES ('"+idclient+"','"+password+"')";
                 db.getStatement().executeUpdate(sql);
