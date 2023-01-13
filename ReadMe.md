@@ -2,7 +2,7 @@ pour executer ce projet:
 
 executer en premier le server class(package: cahtudpserverapplication) pour que le server attende les requetes des clients
 l interface graphique du server s affiche:
-![CHEESE!](MyServer 1_13_2023 1_36_32 AM.png)
+![MyServer 1_13_2023 1_36_32 AM](https://user-images.githubusercontent.com/104314459/212221113-5255be71-e29d-4311-b70b-b8c79163117d.png)
 
 ensuite executer le ClientRegister(package: chatclientudpapplication) class plusieurs fois pour l authentification des clients
 ![CHEESE!](Screenshot 1_13_2023 1_39_20 AM.png)
