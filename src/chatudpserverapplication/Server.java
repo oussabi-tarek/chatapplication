@@ -17,7 +17,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
     // fichier de reception si le client a envoyer un fichier on stocke ce fichier dans ce path afin de le transferer apres a un autre client ou a tous les clients
     String FILE_TO_RECEIVED = "C:\\Users\\DELL\\Downloads\\k.";
     private DatagramSocket socket;
-    DatagramPacket packet;
+
     InetAddress clientAddress;
     // liste des clients connectés avec leurs adresses ip et leurs ports
     HashMap clientColl=new HashMap();
@@ -37,7 +37,7 @@ public class Server extends javax.swing.JFrame implements Runnable {
             try {
                 System.out.println("Waiting for request");
                 byte[] buffer = new byte[1024];
-                packet = new DatagramPacket(buffer, buffer.length);
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
 
                 String message = new String(packet.getData(), 0, packet.getLength());

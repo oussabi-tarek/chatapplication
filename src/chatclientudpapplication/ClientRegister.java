@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 public class ClientRegister extends JFrame{
     private DatagramSocket socket;
     private  InetAddress address ;
-    private  DatagramPacket packet;
+
     // constructeur pour initialiser les composants de l interface graphique et l inetadresse  du serveur
     public ClientRegister() throws UnknownHostException {
         initComponents();
@@ -149,7 +149,7 @@ public class ClientRegister extends JFrame{
                 String id=idclient+": register";
                 socket = new DatagramSocket();
                 byte[] buf = id.getBytes();
-                packet = new DatagramPacket(buf, buf.length, address, 2020);
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 2020);
                 socket.send(packet);
                 new MyClient(idclient,socket).setVisible(true);
                 this.dispose();
@@ -162,7 +162,7 @@ public class ClientRegister extends JFrame{
                 String id=idclient+": register";
                 socket = new DatagramSocket();
                 byte[] buf = id.getBytes();
-                packet = new DatagramPacket(buf, buf.length, address, 2020);
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 2020);
                 socket.send(packet);
                 new MyClient(idclient,socket).setVisible(true);
                 this.dispose();

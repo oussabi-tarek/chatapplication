@@ -14,7 +14,6 @@ public class MyClient extends JFrame{
     private  String iD,clientID="";
     private DatagramSocket s;
     InetAddress address;
-    private  DatagramPacket datagramPacket;
     // chemin du fichier de reception, si le client a recevu un fichier il sera stocke dans ce fichier
     String FILE_TO_RECEIVED = "C:\\Users\\DELL\\Downloads\\L.";
     File myfile;
@@ -45,23 +44,12 @@ public class MyClient extends JFrame{
             while(true){
                 try{
                        byte b[]=new byte[20002];
-                       datagramPacket=new DatagramPacket(b,b.length);
+                       DatagramPacket datagramPacket=new DatagramPacket(b,b.length);
                        s.receive(datagramPacket);
                        String m=new String(datagramPacket.getData(),0,datagramPacket.getLength());
                    // System.out.println("I am "+iD+" and I received "+m);
 
-                    /* cette condition juste parfois quand un client envoie un message a un autre client et le client qui recoit le message apres reception il a quitté le chat
-                        donc le serveur va informer tous les clients que ce client a quitté le chat et le client qui a envoyé le message va recevoir un message de ce type mais parfois
-                        le client qui lui envoie le message recoie un autre message que les autres ce message contient "envoie a un client" c est l expression qu on utilise pour dire au
-                        server que je vais envoyer un message a un client specifique , donc j avais fais cette condition pour qu a chaque fois que le client recoit un message de ce type il
-                        devra la transformer en un message "idclient A quitté le chat"  (idclient on le recuppere du message qu on recoit qui contient cette expression "envoie a un client").
-                      */
-                    if (m.contains("envoie a un client")){
-                        m=m.substring(18);
-                        StringTokenizer st=new StringTokenizer(m,":");
-                        String idClient=st.nextToken();
-                        m=idClient+" A quitté le chat";
-                    }
+
                     // si le message contient le mot "a t envoye un fichier" c'est que le serveur a envoyé un fichier à un client en particulier qui est moi
                     if(m.contains("a t envoye un fichier")){
                         m=m.substring(21);
@@ -337,7 +325,7 @@ public class MyClient extends JFrame{
                     // definir le message à envoyer au serveur
                     msg="envoie fichier client"+myfile.length()+":"+CI+":"+extension;
                     // envoyer le message au serveur qui contient la longueur du fichier, l id du client destinataire et l extension du fichier
-                    datagramPacket= new DatagramPacket(msg.getBytes(), msg.length(), address, 2020);
+                    DatagramPacket datagramPacket= new DatagramPacket(msg.getBytes(), msg.length(), address, 2020);
                     s.send(datagramPacket);
                     // envoyer le fichier au serveur
                     datagramPacket= new DatagramPacket(tampon, tampon.length, address, 2020);
@@ -359,7 +347,7 @@ public class MyClient extends JFrame{
                     // definir le message à envoyer au serveur
                     msg="envoiefile vers tous"+myfile.length()+":"+extension;
                     // envoyer le message au serveur qui contient la longueur du fichier et l extension du fichier
-                    datagramPacket= new DatagramPacket(msg.getBytes(), msg.length(), address, 2020);
+                    DatagramPacket datagramPacket= new DatagramPacket(msg.getBytes(), msg.length(), address, 2020);
                     s.send(datagramPacket);
                     // envoyer le fichier au serveur
                     datagramPacket= new DatagramPacket(tampon, tampon.length, address, 2020);
@@ -377,7 +365,7 @@ public class MyClient extends JFrame{
                     msg="envoie a un client"+CI+":"+mm+":"+iD;
                     jTextField1.setText("");
                     byte[] tampon = msg.getBytes();
-                    datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
+                    DatagramPacket datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
                     s.send(datagramPacket);
                     msgBox.append("<tu as envoye a "+CI+" >"+mm+"\n");
                     clientID="";
@@ -386,7 +374,7 @@ public class MyClient extends JFrame{
                 else{
                     jTextField1.setText("");
                     byte[] tampon = msg.getBytes();
-                    datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
+                    DatagramPacket datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
                     s.send(datagramPacket);
                     msgBox.append("<tu as envoye a tous>"+mm+"\n");
                 }
@@ -408,7 +396,7 @@ public class MyClient extends JFrame{
         String i="formWindowClosing:"+iD;
         try{
             byte[] tampon = i.getBytes();
-            datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
+            DatagramPacket datagramPacket = new DatagramPacket(tampon, tampon.length, address, 2020);
             s.send(datagramPacket);
             this.dispose();
         }catch(Exception ex){
